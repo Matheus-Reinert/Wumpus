@@ -44,6 +44,7 @@ public class WumpusWorld {
 
     private static void findWayDFS(String[][] maze, boolean[][] possibleMoves, int originRow, int originColumn,
                                    int destineRow, int destColumn) {
+        boolean finish = true;
         Stack<String> stack = new Stack<>();
         maze[originRow][originColumn] = "P";
         String originRowString = Integer.toString(originRow);
@@ -51,12 +52,13 @@ public class WumpusWorld {
         String originRowAndColunm = originRowString.concat("," + originColString);
         stack.push(originRowAndColunm);
 
-        while (!stack.empty()) {
-            boolean finish = walking(originRow, originColumn, possibleMoves, maze, stack, destineRow, destColumn);
+        while (!stack.empty() && finish) {
+                finish = walking(originRow, originColumn, possibleMoves, maze, stack, destineRow, destColumn);
             if (finish) {
                 System.out.println("Saída encontrada");
                 break;
             } else {
+                stack.pop();
                 System.out.println("Fim");
             }
         }
@@ -73,12 +75,18 @@ public class WumpusWorld {
         
         
         if (possibleMoves[currentPositionOnRow][currentPositionOnColunm] == true && maze[currentPositionOnRow][currentPositionOnColunm].equals(maze[destineRow][destColumn])) {
+            
+            System.out.println("+--------------------------------+");
+            System.out.println("É tudo nosso e nada deles!");
+            System.out.println("Parabéns!!!");
+            System.out.println("+--------------------------------+\n");
+            stack.pop();
             return true;
 
         } else if (possibleMoves[currentPositionOnRow - 1][currentPositionOnColunm] == true
                 && !maze[currentPositionOnRow - 1][currentPositionOnColunm].equals("P")) {
 
-            verifyIfHasBreezeOrStench(maze, currentPositionOnRow, currentPositionOnColunm);
+            verifyIfHasBreezeOrStench(maze, currentPositionOnRow - 1, currentPositionOnColunm);
 
             maze[currentPositionOnRow - 1][currentPositionOnColunm] = "P";
             String currentPositionOnRowString = Integer.toString(currentPositionOnRow - 1);
@@ -92,7 +100,7 @@ public class WumpusWorld {
         } else if (possibleMoves[currentPositionOnRow][currentPositionOnColunm - 1] == true
                 && !maze[currentPositionOnRow][currentPositionOnColunm - 1].equals("P")) {
 
-            verifyIfHasBreezeOrStench(maze, currentPositionOnRow, currentPositionOnColunm);
+            verifyIfHasBreezeOrStench(maze, currentPositionOnRow, currentPositionOnColunm - 1);
 
             maze[currentPositionOnRow][currentPositionOnColunm - 1] = "P";
             printMaze(maze);
@@ -106,7 +114,7 @@ public class WumpusWorld {
         } else if (possibleMoves[currentPositionOnRow + 1][currentPositionOnColunm] == true
                 && !maze[currentPositionOnRow + 1][currentPositionOnColunm].equals("P")) {
 
-            verifyIfHasBreezeOrStench(maze, currentPositionOnRow, currentPositionOnColunm);
+            verifyIfHasBreezeOrStench(maze, currentPositionOnRow + 1, currentPositionOnColunm);
 
             maze[currentPositionOnRow + 1][currentPositionOnColunm] = "P";
             String currentPositionOnRowString = Integer.toString(currentPositionOnRow + 1);
@@ -120,7 +128,7 @@ public class WumpusWorld {
         } else if (possibleMoves[currentPositionOnRow][currentPositionOnColunm + 1] == true
                 && !maze[currentPositionOnRow][currentPositionOnColunm + 1].equals("P")) {
 
-            verifyIfHasBreezeOrStench(maze, currentPositionOnRow, currentPositionOnColunm);        
+            verifyIfHasBreezeOrStench(maze, currentPositionOnRow, currentPositionOnColunm + 1);        
 
             maze[currentPositionOnRow][currentPositionOnColunm + 1] = "P";
             String currentPositionOnRowString = Integer.toString(currentPositionOnRow);
@@ -149,14 +157,14 @@ public class WumpusWorld {
 
     private static void verifyIfHasBreezeOrStench(String[][] maze, int currentPositionOnRow, int currentPositionOnColunm) {
 
-        if(maze[currentPositionOnRow - 1][currentPositionOnColunm].equals("-")){
-            System.out.println("\n+------------------------------+");
-            System.out.println("     Que cheiro horrível!");
+        if(maze[currentPositionOnRow][currentPositionOnColunm].equals("-")){
             System.out.println("+------------------------------+");
-        } else if (maze[currentPositionOnRow - 1][currentPositionOnColunm].equals("~")) {
+            System.out.println("     Que cheiro horrível!");
+            System.out.println("+------------------------------+\n");
+        } else if (maze[currentPositionOnRow][currentPositionOnColunm].equals("~")) {
             System.out.println("\n+------------------------------+");    
             System.out.println("      Sentindo uma brisa!");
-            System.out.println("+------------------------------+"); 
+            System.out.println("+------------------------------+\n"); 
         }
 
     }
@@ -229,28 +237,30 @@ public class WumpusWorld {
         int min = 1;
         int max = 3;    
         Random rand = new Random();
-        int randomNum = rand.nextInt((max - min) + 1) + min;      
+        int randomNum = rand.nextInt((max - min) + 1) + min; 
+        
+        System.out.println("\n+-----------------------------------------------------------------------------+");
         System.out.println("Você está cara a cara com monstro, o que fará?"); 
 
             switch (randomNum) {
                 case 1:
-                    System.out.println("\n+-----------------------------------------------------------------------------+");
+                    System.out.println("+-----------------------------------------------------------------------------+");
                     System.out.println("Você atirou a flecha!");
                     System.out.println("Mesmo sendo o horrível de mira, sua flecha acertou o meio da testa do Wumpus!"); 
-                    System.out.println("+-----------------------------------------------------------------------------+");
+                    System.out.println("+-----------------------------------------------------------------------------+\n");
                     break;
                 case 2:
-                    System.out.println("\n+-----------------------------------------------------------------------------+");
+                    System.out.println("+-----------------------------------------------------------------------------+");
                     System.out.println("Seu objetivo era errar ?????");
                     System.out.println("Em um golpe só, o Wumpus te matou!");
                     System.out.println("Game Over!");
-                    System.out.println("+-----------------------------------------------------------------------------+");
+                    System.out.println("+-----------------------------------------------------------------------------+\n");
                     break;
                 case 3:
-                    System.out.println("\n+-----------------------------------------------------------------------------+");
+                    System.out.println("+-----------------------------------------------------------------------------+");
                     System.out.println("Jogou uma pedra para distrair ??");
                     System.out.println("Talvez a melhor opção é fugir mesmo hehe");
-                    System.out.println("+-----------------------------------------------------------------------------+");
+                    System.out.println("+-----------------------------------------------------------------------------+\n");
                     break;    
             }
             return randomNum;  
@@ -283,7 +293,9 @@ public class WumpusWorld {
     
         String[][] maze = new String[(int) (Math.random()*(max-min)) + min][(int) (Math.random()*(max-min)) + min];
         populateMaze(maze);
+        System.out.println("\n+------------------------+");
         System.out.println("Peguei minha flecha");
+        System.out.println("+------------------------+\n");
         
         return maze;
     }
@@ -309,9 +321,6 @@ public class WumpusWorld {
         
         maze[1][1] = "P";  
 
-        int min = 0;
-        int max = maze[1].length;
-
         generateWumpusPosition(maze);
         generateGoldPosition(maze);
         generateAbyssPosition(maze);
@@ -321,7 +330,7 @@ public class WumpusWorld {
     private static void generateAbyssPosition(String[][] maze) {
 
         int min = 0;
-        int max = maze[1].length;
+        int max = maze[1].length - 1;
 
         int positionOnRow = (int) (Math.random()*(max-min)) + min;
         int positionOnColunm = (int) (Math.random()*(max-min)) + min;
@@ -353,7 +362,7 @@ public class WumpusWorld {
     private static void generateGoldPosition(String[][] maze) {
 
         int min = 0;
-        int max = maze[1].length;
+        int max = maze[1].length - 1;
 
         int positionOnRow = (int) (Math.random()*(max-min)) + min;
         int positionOnColunm = (int) (Math.random()*(max-min)) + min;
@@ -368,7 +377,7 @@ public class WumpusWorld {
 
     private static void generateWumpusPosition(String[][] maze) {
         int min = 0;
-        int max = maze[1].length;
+        int max = maze[1].length - 1;
 
         int positionOnRow = (int) (Math.random()*(max-min)) + min;
         int positionOnColunm = (int) (Math.random()*(max-min)) + min;
@@ -482,7 +491,6 @@ public class WumpusWorld {
 
     public static void main(String[] args) throws FileNotFoundException {
 
-        Scanner read = new Scanner(System.in);
         int option = 0;
 
         String[][] maze = createMaze();
